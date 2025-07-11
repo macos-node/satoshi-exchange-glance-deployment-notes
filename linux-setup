@@ -1,0 +1,94 @@
+
+Prerequisites
+
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js (v18 or higher)
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install nginx for serving static files
+sudo apt install nginx -y
+
+# Install git
+sudo apt install git -y
+Deployment Steps
+1. Clone and Build:
+
+
+# Clone your repository
+git clone https://github.com/yourusername/your-repo-name.git
+cd your-repo-name
+
+# Install dependencies
+npm install
+
+# Build for production
+npm run build
+2. Configure Nginx:
+
+
+# Create nginx config
+sudo nano /etc/nginx/sites-available/bitcoin-converter
+
+# Add this configuration:
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /var/www/bitcoin-converter;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+# Enable the site
+sudo ln -s /etc/nginx/sites-available/bitcoin-converter /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+3. Deploy Built Files:
+
+
+# Copy built files to web directory
+sudo mkdir -p /var/www/bitcoin-converter
+sudo cp -r dist/* /var/www/bitcoin-converter/
+sudo chown -R www-data:www-data /var/www/bitcoin-converter
+4. Set Up SSL (Recommended):
+
+
+# Install Certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Get SSL certificate
+sudo certbot --nginx -d your-domain.com
+Key Architecture Points
+No Database Required:
+
+App fetches live data from CoinGecko API
+All calculations happen client-side
+No user data stored
+Static Site Benefits:
+
+Fast loading (just HTML/CSS/JS files)
+Low server resource usage
+Easy to cache and scale
+No backend vulnerabilities
+API Rate Limits:
+
+CoinGecko free tier: 30-50 calls/minute
+Your app updates every 30 seconds = 2 calls/minute
+Well within limits for reasonable traffic
+Alternative Deployment Options
+Simpler Options:
+
+Netlify/Vercel - Just connect your GitHub repo
+GitHub Pages - What you're already using (perfect choice!)
+Docker Deployment:
+
+
+FROM nginx:alpine
+COPY dist/ /usr/share/nginx/html/
+EXPOSE 80
+Your application is beautifully simple - it's a Single Page Application (SPA) that runs entirely in the browser, fetches live cryptocurrency data, and presents it with a clean, responsive interface. No complex backend needed!
