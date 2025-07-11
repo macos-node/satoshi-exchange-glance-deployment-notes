@@ -19,3 +19,5 @@ API Integration:
 CoinGecko API - Free cryptocurrency price data (no API key required)
 Deployment on Linux VPS
 Here's how to deploy on your own server:
+
+https://satoshi-exchange-glance.lovable.app
